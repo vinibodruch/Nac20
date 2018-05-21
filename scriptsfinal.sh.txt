@@ -1,0 +1,135 @@
+#!/bin/bash
+#
+#Script para facilitar o gerenciamento de usuários para administradores
+#
+# Menu de seleção das opções
+clear
+#
+echo -e "Escolha um número para as opções abaixo:\n"
+echo "1 - Adicionar usuário;"
+echo "2 - Alterar a senha de um usuário;"
+echo "3 - Adicionar Grupo;"
+echo "4 - Adicionar um usuário ao Grupo;"
+echo "5 - Remover usuário;"
+echo -e "6 - Remover grupo;\n"
+echo -e "^C para Encerrar\n"
+echo "Opção:"
+read NUMBER
+case $NUMBER in
+#
+#Adicionar um usuário
+#
+1)
+clear ; echo "Você escolheu 'Adicionar um usuário'. Digite o nome do usuário desejado:"
+read USER
+REPLY=$(getent passwd | grep -w $USER)
+test -z $REPLY
+if [ $? -eq 0] ; then
+        clear
+        useradd $USER
+        echo -e "Usuário Adicionado!\n"
+     else
+        clear ; echo -e "Usuário $USER já existe!\n"
+fi
+;;
+#
+#Modificar a senha do usuário
+#
+2)
+clear ; echo "Você escolheu 'Alterar a senha de um usuário'. Digite o nome do usuário desejado:"
+echo -e "OBS: Necessário ser Administrador para executar esta ação.\n"
+read USER
+REPLY=$(getent passwd | grep -w $USER)
+test -z $REPLY
+if [ $? -eq 0] ; then
+        clear 
+	passwd $USER
+        clear ; echo -e "Senha alterada!\n"
+     else
+        clear ; echo -e "Usuário $USER não existe!\n"
+fi
+;;
+#
+#Adicionar um grupo
+#
+3)
+clear ; echo "Você escolheu 'Adicionar um grupo'. Digite o nome do Grupo desejado:"
+read GROUP
+REPLY=$(getent group | grep -w $GROUP)
+test -z $REPLY
+if [ $? -eq 0] ; then
+        clear ; echo -e "Grupo $GROUP já existe!\n"
+     else
+
+        groupadd $GROUP
+        clear ; echo -e "Grupo Adicionado!\n"
+fi
+;;
+#
+# Adicionar um usuário ao grupo
+#
+4)
+clear ; echo "Você escolheu 'Adicionar usuário à um grupo'. Digite o nome do usuário desejado:"
+read USER
+REPLY=$(getent passwd | grep -w $USER)
+test -z $REPLY
+if [ $? -eq 0] ; then
+	clear ; echo "Usuário não existe"
+else
+	
+echo "Agora digite o grupo para adicioná-lo:"
+	read GROUP
+	RESP=$(getent group | grep -w $GROUP)
+	test -z $RESP
+		if [ $? -eq 0] ; then
+			clear ; echo "Grupo não existe"
+		else
+			clear ; usermod -a -G $GROUP $USER
+			echo "Usuário adicionado ao grupo"
+		fi
+   
+fi
+;;
+#
+# Remover Usuário
+#
+5)
+clear ; echo "Você escolheu 'Remover um usuário'. Digite o nome do usuário desejado:"
+echo "OBS: Será apagado TODOS os arquivos do usuário. Use com cautela."
+read USER
+REPLY=$(getent passwd | grep -w $USER)
+if [ -z $REPLY] ; then
+	clear ; echo -e "Usuário $USER não existe!\n"
+     else
+        clear
+        userdel -r $USER
+        echo -e "Usuário removido!\n"
+fi
+;;
+#
+#Remover Grupo
+#
+6)
+clear ; echo "Você escolheu 'Remover um grupo'. Digite o nome do Grupo desejado:"
+read GROUP
+groupdel $GROUP
+REPLY=$(getent group | grep -w $GROUP)
+test -z $REPLY
+if [ $? -eq 0] ; then
+        clear ; echo -e "Grupo $GROUP Não existe!\n"
+     else
+        groupdel $GROUP
+        clear ; echo -e "Grupo Removido!\n"
+
+fi
+;;
+#
+# Opção inválida
+#
+* )
+clear ; echo "Opção inválida, por favor, selecione somente as opções válidas."
+sleep 3
+./testescript.sh
+;;
+esac
+
