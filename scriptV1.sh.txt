@@ -1,0 +1,78 @@
+#!/bin/bash
+
+#Script para facilitar o gerenciamento de usuários para administradores
+#
+# Menu de seleção das opções
+clear
+#
+echo -e "Escolha um número para as opções abaixo:\n"
+echo "1 - Adicionar usuário;"
+echo "2 - Alterar a senha de um usuário;"
+echo "3 - Adicionar Grupo;"
+echo "4 - Adicionar um usuário ao Grupo;"
+echo "5 - Remover usuário;"
+echo -e "6 - Remover grupo;\n"
+echo "Opção:"
+read NUMBER
+case $NUMBER in
+#
+#Adicionar um usuário
+#
+1)
+clear ; echo "Você escolheu 'Adicionar um usuário'. Digite o nome do usuário desejado:"
+read USER
+useradd $USER
+;;
+#
+#Modificar a senha do usuário
+#
+2)
+clear ; echo "Você escolheu 'Alterar a senha de um usuário'. Digite o nome do usuário desejado:"
+echo -e "OBS: Necessário ser Administrador para executar esta ação.\n"
+read USER
+passwd $USER
+;;
+#
+#Adicionar um grupo
+#
+3)
+clear ; echo "Você escolheu 'Adicionar um grupo'. Digite o nome do Grupo desejado:"
+read GROUP
+groupadd $GROUP
+;;
+#
+# Adicionar um usuário ao grupo
+#
+4)
+echo "Você escolheu 'Adicionar usuário à um grupo'. Digite o nome do usuário desejado:"
+read USER
+echo "Agora digite o grupo para adicioná-lo:"
+read GROUP
+#
+usermod -a -G $GROUP $USER
+;;
+#
+# Remover Usuário
+#
+5)
+echo "Você escolheu 'Remover um usuário'. Digite o nome do usuário desejado:"
+echo "OBS: Será apagado TODOS os arquivos do usuário. Use com cautela."
+read USER
+userdel -r $USER
+;;
+#
+#Remover Grupo
+#
+6)
+echo "Você escolheu 'Remover um grupo'. Digite o nome do Grupo desejado:"
+read GROUP
+groupdel $GROUP
+;;
+#
+# Opção inválida
+#
+* )
+clear ; echo "Opção inválida, por favor execute o script novamente somente com as opções selecionadas."
+;;
+esac
+
